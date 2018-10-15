@@ -1,4 +1,6 @@
-package models;
+package impressions.models;
+
+import java.util.Calendar;
 
 public class Impression {
 
@@ -6,6 +8,13 @@ public class Impression {
     private double lat;
     private double lng;
     private long timestamp;
+
+    public Impression() {
+        this.deviceId = 33;
+        this.lat=32.56;
+        this.lng=14.56;
+        this.timestamp= Calendar.getInstance().getTimeInMillis();//TODO remove, only for testing purposes
+    }
 
     public long getDeviceId() {
         return deviceId;
