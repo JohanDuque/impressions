@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class ImpressionDaoCsvTest {
@@ -20,6 +21,20 @@ public class ImpressionDaoCsvTest {
         ImpressionDaoCsv dao = getCsvDao();
         final List<String> header = dao.readHeader();
         assertFalse(header.isEmpty());
+    }
+
+    @Test
+    public void itShouldReadRecords() {
+        ImpressionDaoCsv dao = getCsvDao();
+        List<List<String>> records = dao.getAll();
+        assertEquals(100000, records.size());
+    }
+
+    @Test
+    public void itShouldReadAall_100000_Records() {
+        ImpressionDaoCsv dao = getCsvDao();
+        List<List<String>> records = dao.getAll();
+        assertFalse(records.isEmpty());
     }
 
     private ImpressionDaoCsv getCsvDao() {

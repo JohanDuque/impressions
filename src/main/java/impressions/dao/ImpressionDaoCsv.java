@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ImpressionDaoCsv implements ImpressionDao {
 
@@ -32,5 +33,17 @@ public class ImpressionDaoCsv implements ImpressionDao {
     @Override
     public List<Impression> getAllByDevice(long deviceId) {
         return null;
+    }
+
+    @Override
+    public List<List<String>> getAll() {
+        try (BufferedReader reader = new BufferedReader(source)) {
+            reader.readLine();// I'm skipping the header line, kind of a workaround!
+            return reader.lines()
+                    .map(line -> Arrays.asList(line.split(SEPARATOR)))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
