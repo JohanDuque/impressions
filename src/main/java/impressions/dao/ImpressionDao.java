@@ -3,11 +3,11 @@ package impressions.dao;
 import impressions.model.Impression;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ImpressionDao {
 
-    List<Impression> getAll();
+    Map<Long, List<Impression>> getImpressionsFromDevices();
 
-    public List<Impression> getAllByDeviceId(long deviceId);
-
+    Map<Integer, List<Impression>> getImpressionsForHours();
 }

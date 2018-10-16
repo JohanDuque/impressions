@@ -1,5 +1,8 @@
 package impressions.model;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 
 public class Impression {
@@ -54,4 +57,12 @@ public class Impression {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
+    public int getHourOfDay() {
+        final Instant instant = Instant.ofEpochMilli(this.timestamp);//TODO timestamp is not in seconds
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        return localDateTime.getHour();
+
+    }
+
 }

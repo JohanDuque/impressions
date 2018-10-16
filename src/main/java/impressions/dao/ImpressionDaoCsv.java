@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,14 +20,12 @@ public class ImpressionDaoCsv implements ImpressionDao {
     private static final String RESOURCES_PATH = "src/main/resources";
     private static final String FILE_NAME = "dataset.csv";
 
-    @Override
     public List<Impression> getAll() {
         return getFileReader().lines()
                 .map(line -> new Impression(line.split(SEPARATOR)))
                 .collect(Collectors.toList());
     }
 
-    @Override
     public List<Impression> getAllByDeviceId(long deviceId) {
         return getFileReader().lines()
                 .map(line -> new Impression(line.split(SEPARATOR)))
@@ -40,6 +39,20 @@ public class ImpressionDaoCsv implements ImpressionDao {
                 .collect(Collectors.toSet());
     }
 
+    @Override
+    public Map<Long, List<Impression>> getImpressionsFromDevices() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getDeviceId));
+    }
+
+    @Override
+    public Map<Integer, List<Impression>> getImpressionsForHours() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getHourOfDay));
+    }
+
     private BufferedReader getFileReader() {
         Path path = Paths.get(RESOURCES_PATH, FILE_NAME);
         try {
@@ -50,5 +63,4 @@ public class ImpressionDaoCsv implements ImpressionDao {
             throw new UncheckedIOException(e);
         }
     }
-
 }
