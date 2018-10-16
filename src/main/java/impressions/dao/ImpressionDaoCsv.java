@@ -20,13 +20,41 @@ public class ImpressionDaoCsv implements ImpressionDao {
     private static final String RESOURCES_PATH = "src/main/resources";
     private static final String FILE_NAME = "dataset.csv";
 
-    public List<Impression> getAll() {
+    @Override
+    public Map<Long, Long> countImpressionsFromDevices() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getDeviceId, Collectors.counting()));
+    }
+
+    @Override
+    public Map<Integer, Long> countImpressionsForHours() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getHourOfDay, Collectors.counting()));
+    }
+
+    @Override
+    public Map<Integer, List<Impression>> getImpressionsForHours() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getHourOfDay));
+    }
+
+    @Override
+    public Map<Long, List<Impression>> getImpressionsFromDevices() {
+        return getFileReader().lines()
+                .map(line -> new Impression(line.split(SEPARATOR)))
+                .collect(Collectors.groupingBy(Impression::getDeviceId));
+    }
+
+    List<Impression> getAll() {
         return getFileReader().lines()
                 .map(line -> new Impression(line.split(SEPARATOR)))
                 .collect(Collectors.toList());
     }
 
-    public List<Impression> getAllByDeviceId(long deviceId) {
+    List<Impression> getAllByDeviceId(long deviceId) {
         return getFileReader().lines()
                 .map(line -> new Impression(line.split(SEPARATOR)))
                 .filter(impression -> impression.getDeviceId() == deviceId)
@@ -39,19 +67,6 @@ public class ImpressionDaoCsv implements ImpressionDao {
                 .collect(Collectors.toSet());
     }
 
-    @Override
-    public Map<Long, List<Impression>> getImpressionsFromDevices() {
-        return getFileReader().lines()
-                .map(line -> new Impression(line.split(SEPARATOR)))
-                .collect(Collectors.groupingBy(Impression::getDeviceId));
-    }
-
-    @Override
-    public Map<Integer, List<Impression>> getImpressionsForHours() {
-        return getFileReader().lines()
-                .map(line -> new Impression(line.split(SEPARATOR)))
-                .collect(Collectors.groupingBy(Impression::getHourOfDay));
-    }
 
     private BufferedReader getFileReader() {
         Path path = Paths.get(RESOURCES_PATH, FILE_NAME);

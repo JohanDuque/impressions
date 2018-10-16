@@ -44,9 +44,16 @@ public class ImpressionDaoCsvTest {
     }
 
     @Test
-    public void itShouldAnswerHowManyImpressionsAreComingFromEachDevice() {
+    public void itShoulgGetAllImpressionsFromEachDevice() {
         ImpressionDaoCsv dao = new ImpressionDaoCsv();
         Map<Long, List<Impression>> impressionsFromDevices = dao.getImpressionsFromDevices();
+        assertFalse(impressionsFromDevices.isEmpty());
+    }
+
+    @Test
+    public void itShouldAnswerHowManyImpremssionForEachDevice() {
+        ImpressionDaoCsv dao = new ImpressionDaoCsv();
+        Map<Long, Long> impressionsFromDevices = dao.countImpressionsFromDevices();
         assertFalse(impressionsFromDevices.isEmpty());
     }
 

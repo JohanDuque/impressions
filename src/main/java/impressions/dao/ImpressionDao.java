@@ -9,5 +9,9 @@ public interface ImpressionDao {
 
     Map<Long, List<Impression>> getImpressionsFromDevices();
 
+    Map<Long, Long> countImpressionsFromDevices();
+
     Map<Integer, List<Impression>> getImpressionsForHours();
+
+    Map<Integer, Long> countImpressionsForHours();
 }
