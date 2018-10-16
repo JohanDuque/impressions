@@ -1,4 +1,4 @@
-package impressions.models;
+package impressions.model;
 
 import java.util.Calendar;
 
