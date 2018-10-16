@@ -16,6 +16,13 @@ public class Impression {
         this.timestamp= Calendar.getInstance().getTimeInMillis();//TODO remove, only for testing purposes
     }
 
+    public Impression(String[] properties) {
+        this.deviceId = Long.parseLong(properties[0]);
+        this.lat = Double.parseDouble(properties[1]);
+        this.lng = Double.parseDouble(properties[2]);
+        this.timestamp = Long.parseLong(properties[3]);
+    }
+
     public long getDeviceId() {
         return deviceId;
     }

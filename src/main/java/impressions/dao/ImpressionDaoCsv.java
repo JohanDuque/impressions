@@ -36,7 +36,18 @@ public class ImpressionDaoCsv implements ImpressionDao {
     }
 
     @Override
-    public List<List<String>> getAll() {
+    public List<Impression> getAll() {
+        try (BufferedReader reader = new BufferedReader(source)) {
+            reader.readLine();// I'm skipping the header line, kind of a workaround!
+            return reader.lines()
+                    .map(line -> new Impression(line.split(SEPARATOR)))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    public List<List<String>> getAllRecords() {
         try (BufferedReader reader = new BufferedReader(source)) {
             reader.readLine();// I'm skipping the header line, kind of a workaround!
             return reader.lines()

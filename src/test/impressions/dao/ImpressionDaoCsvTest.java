@@ -1,5 +1,6 @@
 package impressions.dao;
 
+import impressions.model.Impression;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -10,11 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class ImpressionDaoCsvTest {
+
+    private static final int TOTAL_RECORDS = 100000;
 
     @Test
     public void itShouldReadHeader(){
@@ -26,15 +29,30 @@ public class ImpressionDaoCsvTest {
     @Test
     public void itShouldReadRecords() {
         ImpressionDaoCsv dao = getCsvDao();
-        List<List<String>> records = dao.getAll();
-        assertEquals(100000, records.size());
+        List<List<String>> records = dao.getAllRecords();
+        assertFalse(records.isEmpty());
     }
 
     @Test
-    public void itShouldReadAall_100000_Records() {
+    public void itShouldReadAll_100000_Records() {
         ImpressionDaoCsv dao = getCsvDao();
-        List<List<String>> records = dao.getAll();
-        assertFalse(records.isEmpty());
+        List<List<String>> records = dao.getAllRecords();
+        assertEquals(TOTAL_RECORDS, records.size());
+    }
+
+    @Test
+    public void itShouldGetAll_100000_Impressions() {
+        ImpressionDaoCsv dao = getCsvDao();
+        List<Impression> records = dao.getAll();
+        assertEquals(TOTAL_RECORDS, records.size());
+    }
+
+    @Test
+    public void itShouldGetNotNullImpressions() {
+        ImpressionDaoCsv dao = getCsvDao();
+        List<Impression> records = dao.getAll();
+        int randValue = new Random().nextInt(TOTAL_RECORDS);
+        assertNotNull(records.get(randValue));
     }
 
     private ImpressionDaoCsv getCsvDao() {
