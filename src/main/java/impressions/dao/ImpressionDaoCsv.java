@@ -1,6 +1,7 @@
 package impressions.dao;
 
 import impressions.model.Impression;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class ImpressionDaoCsv implements ImpressionDao {
 
     private static final String SEPARATOR = ",";
