@@ -5,9 +5,9 @@ import org.junit.Test;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ImpressionDaoCsvTest {
 
@@ -16,16 +16,29 @@ public class ImpressionDaoCsvTest {
     @Test
     public void itShouldGetAll_100000_Impressions() {
         ImpressionDaoCsv dao = new ImpressionDaoCsv();
-        List<Impression> records = dao.getAll();
-        assertEquals(TOTAL_RECORDS, records.size());
+        List<Impression> impressions = dao.getAll();
+        assertEquals(TOTAL_RECORDS, impressions.size());
     }
 
     @Test
     public void itShouldGetNotNullImpressions() {
         ImpressionDaoCsv dao = new ImpressionDaoCsv();
-        List<Impression> records = dao.getAll();
+        List<Impression> impressions = dao.getAll();
         int randValue = new Random().nextInt(TOTAL_RECORDS);
-        assertNotNull(records.get(randValue));
+        assertNotNull(impressions.get(randValue));
     }
 
+    @Test
+    public void itShouldReturnAnyImpressionById() {
+        ImpressionDaoCsv dao = new ImpressionDaoCsv();
+        List<Impression> impressions = dao.getAllByDeviceId(8088);
+        assertFalse(impressions.isEmpty());
+    }
+
+    @Test
+    public void itShouldReturnDistinctsDeviceIds() {
+        ImpressionDaoCsv dao = new ImpressionDaoCsv();
+        Set<Long> devicesIds = dao.getAllDevicesIds();
+        assertFalse(devicesIds.isEmpty());
+    }
 }

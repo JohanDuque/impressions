@@ -8,5 +8,6 @@ public interface ImpressionDao {
 
     List<Impression> getAll();
 
-    public List<Impression> getAllByDevice(long deviceId);
+    public List<Impression> getAllByDeviceId(long deviceId);
+
 }
