@@ -51,10 +51,20 @@ public class Impression {
     }
 
     public int getHourOfDay() {
-        final Instant instant = Instant.ofEpochMilli(this.timestamp);//TODO Watchout timestamp is not in seconds
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
-        return localDateTime.getHour();
+        return getLocalDateTime().getHour();
+    }
 
+    public int getDayOfWeek() {
+        return getLocalDateTime().getDayOfWeek().getValue();
+    }
+
+    public int getDayOfMonth() {
+        return getLocalDateTime().getDayOfMonth();
+    }
+
+    private LocalDateTime getLocalDateTime() {
+        final Instant instant = Instant.ofEpochMilli(this.timestamp);//TODO Watchout timestamp is not in seconds
+        return LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
     }
 
 }
