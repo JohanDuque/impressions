@@ -25,5 +25,5 @@ A Spring Boot microservice structured as follows:
 * Dao: Here we have the layer that access the data, in this concrete case the dataset.csv file
 
 ### Frontend
-As suggested I'm using React
+As suggested I'm using React together with vis for interactive visualizations. 
 
