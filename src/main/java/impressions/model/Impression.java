@@ -3,7 +3,6 @@ package impressions.model;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Calendar;
 
 public class Impression {
 
@@ -11,13 +10,6 @@ public class Impression {
     private double lat;
     private double lng;
     private long timestamp;
-
-    public Impression() {
-        this.deviceId = 33;
-        this.lat=32.56;
-        this.lng=14.56;
-        this.timestamp= Calendar.getInstance().getTimeInMillis();//TODO remove, only for testing purposes
-    }
 
     public Impression(String[] properties) {
         this.deviceId = Long.parseLong(properties[0]);
@@ -59,7 +51,7 @@ public class Impression {
     }
 
     public int getHourOfDay() {
-        final Instant instant = Instant.ofEpochMilli(this.timestamp);//TODO timestamp is not in seconds
+        final Instant instant = Instant.ofEpochMilli(this.timestamp);//TODO Watchout timestamp is not in seconds
         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         return localDateTime.getHour();
 
