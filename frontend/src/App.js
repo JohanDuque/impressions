@@ -80,9 +80,9 @@ class App extends Component {
 
         if (notLoading) {
             return (
-                <div>
+                <div className={'App'}>
                     {/* RADIAL */}
-                    <h1>{eachHourDataTitle}</h1>
+                    <h1 className={'Chart-header'}>{eachHourDataTitle}</h1>
                     <RadialChart
                         innerRadius={240}
                         radius={40}
@@ -97,12 +97,14 @@ class App extends Component {
                         padAngle={0.01}
                         showLabels={true}
                         labelsRadiusMultiplier={7}
+                        labelsStyle={{className:'App'}}
+
                     >
                         {value && <Hint value={value}/>}
                     </RadialChart>
 
                     {/* HEX SERIES */}
-                    <h1>{eachDeviceDataTitle}</h1>
+                    <h1 className={'Chart-header'}>{eachDeviceDataTitle}</h1>
                     <XYPlot
                         xDomain={[0, 10000]}
                         yDomain={[0, 20]}
@@ -144,7 +146,7 @@ class App extends Component {
                     </XYPlot>
 
                     {/*LINEMARK SERIES*/}
-                    <h1>{eachDeviceDataTitle}</h1>
+                    <h1 className={'Chart-header'}>{eachDeviceDataTitle}</h1>
                     <XYPlot width={width} height={height}><XAxis/><YAxis/>
                         <HorizontalGridLines/>
                         <VerticalGridLines/>
@@ -153,7 +155,7 @@ class App extends Component {
                 </div>
             );
         } else {
-            return (<h1>Fetching data...</h1>);
+            return (<div className={'App-header'}>Fetching data...</div>);
         }
     }
 }
