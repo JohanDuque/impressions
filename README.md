@@ -20,7 +20,7 @@ Once you have Java and Maven installed and configured, run:
 `docker build -t impressions .`
 ##Run
 `docker run -d --publish=8888:8080 impressions:latest`
-It will start SpringBoot in a docker container, you can then check at `localhost:8888`
+It will start SpringBoot in a docker container. You can then check at `localhost:8888`
 
 
 ## Project Structure
