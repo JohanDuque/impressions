@@ -1,35 +1,23 @@
 import React, {Component} from 'react';
 import './App.css';
 import '../node_modules/react-vis/dist/style.css';
-import {
-    HexbinSeries,
-    Hint,
-    HorizontalGridLines,
-    LineMarkSeries,
-    RadialChart,
-    VerticalGridLines,
-    XAxis,
-    XYPlot,
-    YAxis,Borders
-} from 'react-vis';
+import {Borders, HexbinSeries, Hint, RadialChart, XAxis, XYPlot, YAxis, HorizontalGridLines,
+VerticalGridLines,
+LineMarkSeries } from 'react-vis';
 
 class App extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            width: 800,
-            height: 600,
-            value: {angle: 2, label: "tests"},
+            width: 1200,
+            height: 800,
             hoveredNode: null,
-            radius: 5,
-            offset: 0,
         };
     }
 
     componentDidMount() {
         this.getData();
-        //setInterval(this.getData, 6500);
     }
 
     getData = () => {
@@ -43,6 +31,7 @@ class App extends Component {
             .then(response => response.json())
             .then(json => {
                 this.setState({eachDeviceData: this.PrepareHexagonalChart(json)});
+                this.setState({eachDeviceData2: this.prepareLinearChart(json)});
             });
     };
 
@@ -55,37 +44,83 @@ class App extends Component {
         return data;
     };
 
-    PrepareRadialChart(json) {
+    PrepareHexagonalChart(json) {
         let data = [];
         for (const keyName in json) {
-            let value = json[keyName];
-            data.push({angle: value, label: keyName, subLabel: parseInt(keyName), value: value});
+            let value = json[keyName] % 10000;
+            data.push({x:parseInt(keyName) , y: value, deviceId: keyName, impressions: value,});
         }
         return data;
     };
 
-    PrepareHexagonalChart(json) {
+    PrepareRadialChart(json) {
         let data = [];
         for (const keyName in json) {
-            let value = json[keyName];
-            data.push({x: value, y: parseInt(keyName), deviceId: keyName, impressions: value,});
+            let value = json[keyName] % 4000;
+            data.push({impressions: value, label: keyName + 'h', subLabel: value + ' Imp.', hour: keyName});
         }
         return data;
     };
 
     render() {
-        const {eachHourData, eachDeviceData, width, height, value, radius, hoveredNode, offset} = this.state;
+        const {eachHourData, eachDeviceData, eachDeviceData2, width, height, value, radius, hoveredNode, offset} = this.state;
         debugger;
 
         if (eachHourData) {
 
             return (
                 <div>
+
+
+                    <XYPlot
+                        xDomain={[0, 10000]}
+                        yDomain={[0, 20]}
+                        width={width}
+                        height={height}
+                        getX={d => d.x}
+                        getY={d => d.y}
+                        onMouseLeave={() => this.setState({hoveredNode: null})}
+                    >
+                        <HexbinSeries
+                            animation
+                            padding={28}
+                            className="hexbin-example"
+                            style={{
+                                stroke: '#125C77',
+                                strokeLinejoin: 'round',
+                                padding: '20px'
+                            }}
+                            onValueMouseOver={d => this.setState({hoveredNode: d})}
+                            xOffset={0}
+                            yOffset={0}
+                            colorRange={['orange', 'cyan']}
+                            radius={7}
+                            data={eachDeviceData}
+                            sizeHexagonsWithCount
+                        />
+                        <Borders style={{all: {fill: '#fff'}}}/>
+                        <XAxis/>
+                        <YAxis/>
+                        {hoveredNode && (
+                            <Hint
+                                xType="literal"
+                                yType="literal"
+                                getX={d => d.x}
+                                getY={d => d.y}
+                                value={{
+                                    x: hoveredNode.x,
+                                    y: hoveredNode.y,
+                                }}
+                            />
+                        )}
+                    </XYPlot>
+
+                    {/* RADIAL */}
                     <RadialChart
                         /*className={'donut-chart-example'}*/
                         innerRadius={200}
                         radius={40}
-                        getAngle={d => d.angle}
+                        getAngle={d => d.impressions}
                         data={eachHourData}
                         onValueMouseOver={v => {
                             this.setState({value: v})
@@ -102,55 +137,13 @@ class App extends Component {
                         {value && <Hint value={value}/>}
                     </RadialChart>
 
-{/*LineMarkSeries*/}
-                 {/*   <XYPlot width={width} height={height}><XAxis/><YAxis/>
+                    {/*          LineMarkSeries*/}
+                    <XYPlot width={width} height={height}><XAxis/><YAxis/>
                         <HorizontalGridLines/>
                         <VerticalGridLines/>
-                        <LineMarkSeries data={eachHourData}/>
-                    </XYPlot>*/}
-{/* HEXBIN */}
-                    <XYPlot
-                        xDomain={[0, 20]}
-                        yDomain={[0, 10000]}
-                        width={width}
-                        height={height}
-                        getX={d => d.x}
-                        getY={d => d.y}
-                        onMouseLeave={() => this.setState({hoveredNode: null})}
-                    >
-                        <HexbinSeries
-                            animation
-                            className="hexbin-example"
-                            style={{
-                                stroke: '#125C77',
-                                strokeLinejoin: 'round'
-                            }}
-                            onValueMouseOver={d => this.setState({hoveredNode: d})}
-                            xOffset={offset}
-                            yOffset={offset}
-                            colorRange={['orange', 'cyan']}
-                            radius={radius}
-                            data={eachDeviceData}
-                            sizeHexagonsWithCount
-                        />
-                        <Borders style={{all: {fill: '#fff'}}} />
-                        <XAxis />
-                        <YAxis />
-                        {hoveredNode && (
-                            <Hint
-                                xType="literal"
-                                yType="literal"
-                                getX={d => d.x}
-                                getY={d => d.y}
-                                value={{
-                                    x: hoveredNode.x,
-                                    y: hoveredNode.y,
-                                    deviceId: hoveredNode.deviceId,
-                                    impressions: hoveredNode.impressions
-                                }}
-                            />
-                        )}
+                        <LineMarkSeries data={eachDeviceData2}/>
                     </XYPlot>
+
 
 
                 </div>
