@@ -1,18 +1,28 @@
 import React, {Component} from 'react';
 import './App.css';
 import '../node_modules/react-vis/dist/style.css';
-import {Borders, HexbinSeries, Hint, RadialChart, XAxis, XYPlot, YAxis, HorizontalGridLines,
-VerticalGridLines,
-LineMarkSeries } from 'react-vis';
+import {
+    Borders,
+    HexbinSeries,
+    Hint,
+    HorizontalGridLines,
+    LineMarkSeries,
+    RadialChart,
+    VerticalGridLines,
+    XAxis,
+    XYPlot,
+    YAxis
+} from 'react-vis';
 
 class App extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             width: 1200,
             height: 800,
             hoveredNode: null,
+            eachHourDataTitle: 'Impressions for each hour of the day(24h):',
+            eachDeviceDataTitle: 'Impressions coming from each device:',
         };
     }
 
@@ -24,14 +34,13 @@ class App extends Component {
         fetch('/api/impressions/for-each-hour')
             .then(response => response.json())
             .then(json => {
-                debugger
                 this.setState({eachHourData: this.PrepareRadialChart(json)});
             });
         fetch('/api/impressions/from-each-device')
             .then(response => response.json())
             .then(json => {
                 this.setState({eachDeviceData: this.PrepareHexagonalChart(json)});
-                this.setState({eachDeviceData2: this.prepareLinearChart(json)});
+                this.setState({eachDeviceDataLinear: this.prepareLinearChart(json)});
             });
     };
 
@@ -48,7 +57,7 @@ class App extends Component {
         let data = [];
         for (const keyName in json) {
             let value = json[keyName] % 10000;
-            data.push({x:parseInt(keyName) , y: value, deviceId: keyName, impressions: value,});
+            data.push({x: parseInt(keyName), y: value, deviceId: keyName, impressions: value});
         }
         return data;
     };
@@ -63,15 +72,37 @@ class App extends Component {
     };
 
     render() {
-        const {eachHourData, eachDeviceData, eachDeviceData2, width, height, value, radius, hoveredNode, offset} = this.state;
-        debugger;
+        const {
+            eachHourData, eachDeviceData, eachDeviceDataLinear, eachHourDataTitle,
+            eachDeviceDataTitle, width, height, value, hoveredNode
+        } = this.state;
+        const notLoading = eachHourData && eachDeviceData && eachDeviceDataLinear;
 
-        if (eachHourData) {
-
+        if (notLoading) {
             return (
                 <div>
+                    {/* RADIAL */}
+                    <h1>{eachHourDataTitle}</h1>
+                    <RadialChart
+                        innerRadius={240}
+                        radius={40}
+                        getAngle={d => d.impressions}
+                        data={eachHourData}
+                        onValueMouseOver={v => {
+                            this.setState({value: v})
+                        }}
+                        onSeriesMouseOut={v => this.setState({value: false})}
+                        width={width}
+                        height={height}
+                        padAngle={0.01}
+                        showLabels={true}
+                        labelsRadiusMultiplier={7}
+                    >
+                        {value && <Hint value={value}/>}
+                    </RadialChart>
 
-
+                    {/* HEX SERIES */}
+                    <h1>{eachDeviceDataTitle}</h1>
                     <XYPlot
                         xDomain={[0, 10000]}
                         yDomain={[0, 20]}
@@ -82,13 +113,10 @@ class App extends Component {
                         onMouseLeave={() => this.setState({hoveredNode: null})}
                     >
                         <HexbinSeries
-                            animation
-                            padding={28}
                             className="hexbin-example"
                             style={{
                                 stroke: '#125C77',
                                 strokeLinejoin: 'round',
-                                padding: '20px'
                             }}
                             onValueMouseOver={d => this.setState({hoveredNode: d})}
                             xOffset={0}
@@ -108,70 +136,25 @@ class App extends Component {
                                 getX={d => d.x}
                                 getY={d => d.y}
                                 value={{
-                                    x: hoveredNode.x,
-                                    y: hoveredNode.y,
+                                    x: hoveredNode.deviceId,
+                                    y: hoveredNode.impressions,
                                 }}
                             />
                         )}
                     </XYPlot>
 
-                    {/* RADIAL */}
-                    <RadialChart
-                        /*className={'donut-chart-example'}*/
-                        innerRadius={200}
-                        radius={40}
-                        getAngle={d => d.impressions}
-                        data={eachHourData}
-                        onValueMouseOver={v => {
-                            this.setState({value: v})
-                        }}
-                        onSeriesMouseOut={v => this.setState({value: false})}
-                        width={width}
-                        height={height}
-                        padAngle={0.01}
-                        showLabels={true}
-                        //labelsStyle={}
-                        labelsRadiusMultiplier={6}
-                        labelsAboveChildren={false}
-                    >
-                        {value && <Hint value={value}/>}
-                    </RadialChart>
-
-                    {/*          LineMarkSeries*/}
+                    {/*LINEMARK SERIES*/}
+                    <h1>{eachDeviceDataTitle}</h1>
                     <XYPlot width={width} height={height}><XAxis/><YAxis/>
                         <HorizontalGridLines/>
                         <VerticalGridLines/>
-                        <LineMarkSeries data={eachDeviceData2}/>
+                        <LineMarkSeries data={eachDeviceDataLinear}/>
                     </XYPlot>
-
-
-
                 </div>
             );
         } else {
-            return (<p>Loading...</p>);
+            return (<h1>Fetching data...</h1>);
         }
-
-        /*      return (
-                  <XYPlot width={width} height={height}><XAxis/><YAxis/>
-                      <HorizontalGridLines/>
-                      <VerticalGridLines/>
-                      <LineMarkSeries data={data}/>
-                  </XYPlot>
-              );*/
-
-        /*
-        return (
-            <XYPlot width={width} height={height} stackBy="x">
-                <VerticalGridLines/>
-                <HorizontalGridLines/>
-                <XAxis/>
-                <YAxis/>
-                <BarSeries data={data}/>
-                {/!*<BarSeries data={data} />*!/}
-            </XYPlot>
-        );*/
-
     }
 }
 
